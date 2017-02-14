@@ -1,0 +1,73 @@
+url = 192.168.1.107:8000/api/
+database: 192.168.1.107/phpmyadmin/     username: root      password:   gobubble
+
+require : url + get_address_node_list/
+method: get
+require_arg: none
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+        "tableList": {robotId: {nodelabel: nodeId}}
+    }
+
+
+require : url + get_robots_list/
+method: get
+require_arg: none
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+        "robotList": [{"robotId": "T001", "robotName": "Tony"}]
+    }
+
+
+require : url + get_robots_status/
+method: post
+require_arg: robotId="T001"
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+        "charge": 100,      # 剩余电量， 百分制
+        "on_mission": false/true    # 是否在执行任务
+    }
+
+
+
+require : url + update_node/
+method: post
+require_arg: {
+                robotId:"T001",
+                "category": 0/1,    # 0:删除节点， 1：增加节点
+                "nodeId": int,      # 0有效
+                "label": "string",  # 1有效
+             }
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+    }
+
+
+
+require : url + execute_mission/
+method: post
+require_arg: {
+                robotId:"T001",
+                "category": "GoalMove"
+                "nodeId": int,      # "GoalMove"有效
+             }
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+    }
+
+
+require : url + cancel_mission/
+method: get
+require_arg: none
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+    }
+
+
+

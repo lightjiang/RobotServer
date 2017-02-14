@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>move_control</title>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">//<![CDATA[
+    function connect() {
+        var s = new WebSocket("ws://" + window.location.host + "/echo");
+        s.onopen = function () {
+            console.log('WebSocket open');
+        };
+        s.onmessage = function (e) {
+            console.log('message: ' + e.data);
+            $('#messagecontainer').prepend('<p>' + e.data + '</p>');
+        };
+        window.s = s;
+    }
+    connect();
+
+    $(function () {
+        var s = 0.1;
+        var r = 0.2;
+        var rs = 0.05;
+        $("#bn1").click(function () {
+            window.s.send(JSON.stringify({"x": rs, "angle": r}))
+        });
+        $("#bn2").click(function () {
+            window.s.send(JSON.stringify({"x": s, "angle": 0}))
+        });
+        $("#bn3").click(function () {
+            window.s.send(JSON.stringify({"x": rs, "angle": -r}))
+        });
+        $("#bn4").click(function () {
+            window.s.send(JSON.stringify({"x": 0, "angle": r}))
+        });
+        $("#bn5").click(function () {
+            window.s.send(JSON.stringify({"x": 0, "angle": 0}))
+        });
+        $("#bn6").click(function () {
+            window.s.send(JSON.stringify({"x": 0, "angle": -r}))
+        });
+        $("#bn7").click(function () {
+            window.s.send(JSON.stringify({"x": -rs, "angle": -r}))
+        });
+        $("#bn8").click(function () {
+            window.s.send(JSON.stringify({"x": -s, "angle": 0}))
+        });
+        $("#bn9").click(function () {
+            window.s.send(JSON.stringify({"x": -rs, "angle": r}))
+        });
+        $('#connect_websocket').click(function () {
+            if (window.s) {
+                window.s.close()
+            }
+            connect()
+        });
+        $('#send_message').click(function () {
+            if (!window.s) {
+                alert("Please connect server.");
+            } else {
+                window.s.send(JSON.stringify({"value": $('#message').val(), "command": 1}));
+            }
+        });
+        $('#close_websocket').click(function () {
+            if (window.s) {
+                window.s.close();
+            }
+        });
+
+    });
+    //]]></script>
+</head>
+<body>
+<br>
+{#<input type="text" id="message" value="Hello, World!" style="width: 100%;height: 100px;font-size: 75px"/>#}
+{#<button type="button" id="connect_websocket" style="width: 100%;height: 100px;font-size: 75px">Connect websocket#}
+{#</button>#}
+{#<button type="button" id="send_message" style="width: 100%;height: 100px;font-size: 75px">Send message</button>#}
+{#<button type="button" id="close_websocket" style="width: 100%;height: 100px;font-size: 75px">Close websocket</button>#}
+<div>
+    <button type="button" id="bn1" style="width: 30%;height: 100px;font-size: 75px"></button>
+    <button type="button" id="bn2" style="width: 30%;height: 100px;font-size: 75px">前</button>
+    <button type="button" id="bn3" style="width: 30%;height: 100px;font-size: 75px"></button>
+    <button type="button" id="bn4" style="width: 30%;height: 100px;font-size: 75px">左</button>
+    <button type="button" id="bn5" style="width: 30%;height: 100px;font-size: 75px">stop</button>
+    <button type="button" id="bn6" style="width: 30%;height: 100px;font-size: 75px">右</button>
+    <button type="button" id="bn7" style="width: 30%;height: 100px;font-size: 75px"></button>
+    <button type="button" id="bn8" style="width: 30%;height: 100px;font-size: 75px">后</button>
+    <button type="button" id="bn9" style="width: 30%;height: 100px;font-size: 75px"></button>
+</div>
+{#<h1>Received Messages</h1>#}
+{#<div id="messagecontainer">#}
+{##}
+{#</div>#}
+</body>
+</html>
