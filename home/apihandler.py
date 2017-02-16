@@ -31,7 +31,9 @@ class ApiHandler(object):
             temp.append(
                 {
                     "robotId": i.id,
-                    "robotName": i.name
+                    "robotName": i.name,
+                    "on_mission": i.on_mission,
+                    "charge": i.charge
                 }
             )
         return self.__response(robotList=temp)

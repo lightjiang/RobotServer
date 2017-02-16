@@ -17,7 +17,9 @@ require_arg: none
 response_arg:
     {
         "status": 0, "responseText": "ACCESS SUCCEED",
-        "robotList": [{"robotId": "T001", "robotName": "Tony"}]
+        "robotList": [
+                        {"robotId": "T001", "robotName": "Tony", "charge": 100, "on_mission": false}
+                     ]
     }
 
 
