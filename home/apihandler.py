@@ -18,9 +18,10 @@ class ApiHandler(object):
         temp = {}
         robots = Robot.objects.all()
         for robot in robots:
-            temp[robot.id] = {}
+            temp[robot.id] = []
             for node in robot.marknode_set.filter(status=True):
-                temp[robot.id][node.label] = node.id
+                tem = {"NodeName": node.label, "NodeId": node.id}
+                temp[robot.id].append(tem)
         return self.__response(tableList=temp)
 
     def get_robots_list(self):
@@ -28,26 +29,34 @@ class ApiHandler(object):
         robots = Robot.objects.all()
         temp = []
         for i in robots:
-            temp.append(
-                {
-                    "robotId": i.id,
-                    "robotName": i.name,
-                    "on_mission": i.on_mission,
-                    "charge": i.charge
-                }
-            )
+            dic = {
+                "robotId": i.id,
+                "robotName": i.name,
+                "on_mission": i.on_mission,
+                "charge": i.charge,
+                "node": []
+            }
+            for node in i.marknode_set.filter(status=True):
+                tem = {"NodeName": node.label, "NodeId": node.id}
+                dic["node"].append(tem)
+            temp.append(dic)
+
         return self.__response(robotList=temp)
 
     def get_robots_status(self):
-        data = self.get
+        data = self.post
         if "robotId" in data:
             temp = Robot.objects.filter(id=data["robotId"].upper())
             if temp:
                 robot = temp[0]
                 stat = {
                     "on_mission": robot.on_mission,
-                    "charge": robot.charge
+                    "charge": robot.charge,
+                    "node": []
                 }
+                for node in robot.marknode_set.filter(status=True):
+                    tem = {"NodeName": node.label, "NodeId": node.id}
+                    stat["node"].append(tem)
                 return self.__response(**stat)
             else:
                 return self.__response(status=2001, response_text="robot not exist")

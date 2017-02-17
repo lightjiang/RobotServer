@@ -1,11 +1,13 @@
 import json
 import threading
+from binascii import b2a_hex
+
 from django.views.decorators.csrf import csrf_exempt
 from core.RequestHandler import myview
 from dwebsocket.decorators import accept_websocket
 from home.apihandler import ApiHandler
 from src.MQhandler import MQSend
-
+from src.MapHandler import MapHandler
 
 # Create your views here.
 
@@ -17,6 +19,11 @@ def index(request, handler=None):
 @accept_websocket
 def echo(request):
     if request.is_websocket:
+        map_handler = MapHandler()
+        map_handler.mark_node(x=0.283, y=2.86)
+        from RobotsServer.settings import BASE_DIR
+        path = BASE_DIR + "/home/static/home/img/1.jpg"
+        map_handler.static_map.save(path)
         lock = threading.RLock()
         try:
             lock.acquire()

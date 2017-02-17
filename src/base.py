@@ -100,5 +100,5 @@ class MotionHandler(object):
 
 if __name__ == '__main__':
     handler = MotionHandler(node="test", mode=0)
-    handler.move(x=0.1)
+    print(handler.get_coordinate())
     # handler.goal(x=1.9614, y=-0.56)
