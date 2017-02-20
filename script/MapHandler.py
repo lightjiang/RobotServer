@@ -8,7 +8,6 @@ import rospy
 from PIL import Image
 from PIL import ImageDraw
 from nav_msgs.srv import GetMap
-from binascii import b2a_hex
 
 
 class MapHandler(object):

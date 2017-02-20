@@ -7,6 +7,7 @@ rabbitmq发送和接受消息封装函数
 import pika
 import time
 import json
+import uuid
 
 
 class MQBase(object):

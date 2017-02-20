@@ -1,6 +1,6 @@
 # coding=utf-8
 from core.models import MarkNode, Robot
-from src.MQhandler import MQSend
+from script.MQhandler import MQSend
 import time
 import json
 
@@ -89,7 +89,7 @@ class ApiHandler(object):
                     else:
                         self.__response(status=2011, response_text="node %s not existed" % data["nodeId"])
                 elif category == "1":
-                    if MarkNode.objects.filter(robot=robot, label=data["label"], status=True):
+                    if MarkNode.objects.filter(robot=robot, label=data["label"], status=True, map_name=robot.local_map):
                         return self.__response(status=2012, response_text="please rename the label")
                     else:
                         mq = MQSend()

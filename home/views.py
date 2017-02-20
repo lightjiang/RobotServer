@@ -6,8 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from core.RequestHandler import myview
 from dwebsocket.decorators import accept_websocket
 from home.apihandler import ApiHandler
-from src.MQhandler import MQSend
-from src.MapHandler import MapHandler
+from script.MQhandler import MQSend
+from script.MapHandler import MapHandler
 
 # Create your views here.
 

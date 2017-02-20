@@ -103,6 +103,7 @@ class Robot(DataBase):
     icon = models.CharField(max_length=200, default="")
     on_mission = models.BooleanField(default=False)
     charge = models.IntegerField(default=100)
+    local_map = models.CharField(max_length=20)
 
     def __unicode__(self):
         return self.id
@@ -116,6 +117,7 @@ class MarkNode(DataBase):
     y = models.FloatField(default=0.0)
     rz = models.FloatField(default=0.0)
     is_shown = models.BooleanField(default=True)
+    map_name = models.CharField(default="test", max_length=20)
 
     def __unicode__(self):
         return "Robot %s's marked_node: %s" % (self.robot.id, self.label)

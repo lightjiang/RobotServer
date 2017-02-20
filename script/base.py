@@ -27,9 +27,9 @@ class MotionHandler(object):
         self.odom_frame = '/odom'
         self.base_frame = '/base_footprint'
         if mode:
-            self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1.0))
+            self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1.1))
         else:
-            self.tf_listener.waitForTransform(self.map_frame, self.odom_frame, rospy.Time(), rospy.Duration(1.0))
+            self.tf_listener.waitForTransform(self.map_frame, self.base_frame, rospy.Time(), rospy.Duration(2))
 
     def goal(self, x=0.0, y=0.0, **kwargs):
         goal = MoveBaseGoal()
@@ -88,7 +88,7 @@ class MotionHandler(object):
         return Point(*trans), quat_to_angle(Quaternion(*rot))
 
     def get_coordinate(self):
-        (trans, rot) = self.tf_listener.lookupTransform(self.map_frame, self.odom_frame, rospy.Time(0))
+        (trans, rot) = self.tf_listener.lookupTransform(self.map_frame, self.base_frame, rospy.Time(0))
         res = Point(*trans), quat_to_angle(Quaternion(*rot))
         return res
 
@@ -99,6 +99,11 @@ class MotionHandler(object):
         rospy.sleep(1)
 
 if __name__ == '__main__':
-    handler = MotionHandler(node="test", mode=0)
-    print(handler.get_coordinate())
+    import time
+    for i in range(10):
+        a = time.time()
+        handler = MotionHandler(node="test", mode=0)
+        #print(time.time())
+        #print(handler.get_coordinate())
+        print(time.time() - a)
     # handler.goal(x=1.9614, y=-0.56)
