@@ -103,6 +103,7 @@ class Robot(DataBase):
     icon = models.CharField(max_length=200, default="")
     on_mission = models.BooleanField(default=False)
     charge = models.IntegerField(default=100)
+    netbook_charge = models.IntegerField(default=100)
     local_map = models.CharField(max_length=20)
 
     def __unicode__(self):

@@ -11,7 +11,6 @@ from rbx1_nav.transform_utils import quat_to_angle, normalize_angle
 import math
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
-import pika
 from actionlib_msgs.msg import *
 
 
@@ -100,10 +99,10 @@ class MotionHandler(object):
 
 if __name__ == '__main__':
     import time
-    for i in range(10):
-        a = time.time()
-        handler = MotionHandler(node="test", mode=0)
-        #print(time.time())
-        #print(handler.get_coordinate())
-        print(time.time() - a)
-    # handler.goal(x=1.9614, y=-0.56)
+    handler = MotionHandler(node="test", mode=0)
+    #print(time.time())
+    #print(handler.get_coordinate())
+    # handler.goal(x=0.06, y=0)
+    handler.move_base.cancel_all_goals()
+
+

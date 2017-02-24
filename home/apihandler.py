@@ -1,8 +1,6 @@
 # coding=utf-8
 from core.models import MarkNode, Robot
 from script.MQhandler import MQSend
-import time
-import json
 
 
 class ApiHandler(object):
@@ -19,12 +17,13 @@ class ApiHandler(object):
         robots = Robot.objects.all()
         for robot in robots:
             temp[robot.id] = []
-            for node in robot.marknode_set.filter(status=True):
+            for node in robot.marknode_set.filter(status=True, map_name=robot.local_map):
                 tem = {"NodeName": node.label, "NodeId": node.id}
                 temp[robot.id].append(tem)
         return self.__response(tableList=temp)
 
     def get_robots_list(self):
+        self.update_status()
         from core.models import Robot
         robots = Robot.objects.all()
         temp = []
@@ -44,6 +43,7 @@ class ApiHandler(object):
         return self.__response(robotList=temp)
 
     def get_robots_status(self):
+        self.update_status()
         data = self.post
         if "robotId" in data:
             temp = Robot.objects.filter(id=data["robotId"].upper())
@@ -62,6 +62,13 @@ class ApiHandler(object):
                 return self.__response(status=2001, response_text="robot not exist")
         else:
             return self.__response(status=1002, response_text="argument error: missing %s" % "robotId")
+
+    @staticmethod
+    def update_status(robot_id="T001"):
+        mq = MQSend()
+        ms = mq.message("update_status", robot_id=robot_id, no_ack=False)
+        mq.send(message=ms)
+        return True
 
     def update_node(self):
         """
@@ -93,9 +100,9 @@ class ApiHandler(object):
                         return self.__response(status=2012, response_text="please rename the label")
                     else:
                         mq = MQSend()
-                        me = mq.message("MarkNode", label=data["label"], robot_id=robot.id)
-                        mq.send(message=me)
-                        return self.__response()
+                        me = mq.message("MarkNode", label=data["label"], robot_id=robot.id, no_ack=False)
+                        res = mq.send(message=me)
+                        return self.__response(response_arg=res)
                 else:
                     return self.__response(status=1002, response_text="argument error")
             else:
@@ -120,17 +127,33 @@ class ApiHandler(object):
                 node = nodes[0]
                 message = {"x": node.x, "y": node.y, "z": node.rz}
                 mq = MQSend()
-                me = mq.message("GoalMove", **message)
+                me = mq.message("GoalMove", no_ack=False, **message)
                 mq.send(queue="BaseMission", message=me)
+                # robot.on_mission = True
+                # robot.save()
             else:
                 self.__response(status=2011, response_text="node %s not existed" % data["nodeId"])
+        elif category == "GoalBack":
+            message = {"x": 0, "y": 0, "z": 0}
+            mq = MQSend()
+            me = mq.message("GoalMove", no_ack=False, **message)
+            mq.send(queue="BaseMission", message=me)
         # MQSend().send(queue="BaseMission", message=json.dumps(message))
         self.__response()
 
     def cancel_mission(self):
+        mq = MQSend()
+        me = mq.message("cancel_all_goal", no_ack=False)
+        mq.send(queue="BaseMission", message=me)
         self.__response()
 
-    def __response(self, status=0, response_text=None, **kwargs):
+    def clear_costmaps(self):
+        mq = MQSend()
+        me = mq.message("clear_costmaps", no_ack=False)
+        mq.send(queue="BaseMission", message=me)
+        self.__response()
+
+    def __response(self, status=0, response_text=None, response_arg=None, **kwargs):
         if not response_text:
             if not status:
                 response_text = u"ACCESS SUCCEED"
@@ -140,9 +163,8 @@ class ApiHandler(object):
             "status": status,
             "responseText": response_text,
                }
+        if response_arg:
+            res["responseArg"] = response_arg
         res.update(**kwargs)
         print(res)
         self.handler.jsonresponse(res)
-
-    def default_attr(self, **kwargs):
-        self.__response(status=1001, response_text="api not exist")

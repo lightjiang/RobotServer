@@ -26,7 +26,7 @@ class MapHandler(object):
         data = self.static_srv.call().map
         self.width = data.info.width
         self.height = data.info.height
-        print(self.width, self.height)
+        print(self.width, self.height, data.info)
         self.resolution = 1.0/data.info.resolution
         self.orign_x = abs(data.info.origin.position.x)
         self.orign_y = abs(data.info.origin.position.y)
@@ -45,6 +45,9 @@ class MapHandler(object):
                 self.static_map.putpixel((x, y), color)
     
     def mark_node(self, x=0.0, y=0.0):
+        print(self.orign_x, self.orign_y)
+        self.orign_x = 23.7
+        self.orign_y = 24.3
         x = (x + self.orign_x) * self.resolution
         y = self.height - (self.orign_y + y)*self.resolution
         draw = ImageDraw.Draw(self.static_map)
@@ -53,6 +56,6 @@ class MapHandler(object):
 
 if __name__ == '__main__':
     h = MapHandler()
-    h.mark_node(x=0.283, y=2.86)
+    # h.mark_node(x=0.283, y=2.86)
     h.mark_node(x=0, y=0)
     h.static_map.show()

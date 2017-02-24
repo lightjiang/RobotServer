@@ -25,7 +25,6 @@ class RequestHandler(object):
         self.session = self.request.session  # session
         self.post = self.request.POST.dict()  # POST字典
         self.get = self.request.GET.dict()  # GET字典
-        print(self.post, self.get)
         self.response_cookies = {}  # 要设置的cookie
 
     def __track(self):

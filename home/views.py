@@ -29,7 +29,6 @@ def echo(request):
             lock.acquire()
             client = request.websocket
             for message in client:
-
                 if not message:
                     break
                 else:
