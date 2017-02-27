@@ -23,7 +23,7 @@ class ApiHandler(object):
         return self.__response(tableList=temp)
 
     def get_robots_list(self):
-        self.update_status()
+        # self.update_status()
         from core.models import Robot
         robots = Robot.objects.all()
         temp = []
