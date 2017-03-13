@@ -147,6 +147,13 @@ class ApiHandler(object):
         mq.send(queue="BaseMission", message=me)
         self.__response()
 
+    def back_dock(self):
+        mq = MQSend()
+        me = mq.message("back_dock", no_ack=False)
+        res = mq.send(queue="BaseMission", message=me)
+        self.clear_costmaps()
+        self.__response()
+
     def clear_costmaps(self):
         mq = MQSend()
         me = mq.message("clear_costmaps", no_ack=False)

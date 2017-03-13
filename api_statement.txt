@@ -79,7 +79,13 @@ response_arg:
         "status": 0, "responseText": "ACCESS SUCCEED",
     }
 
-
+require : url + back_dock/
+method: post
+require_arg: {"robotId": }
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+    }
 
 
 

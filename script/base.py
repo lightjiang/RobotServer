@@ -5,13 +5,43 @@ light
 turtlebot motion control
 """
 import rospy
-from geometry_msgs.msg import Twist, Point, Quaternion
+import roslib
 import tf
-from rbx1_nav.transform_utils import quat_to_angle, normalize_angle
 import math
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
-from actionlib_msgs.msg import *
+from geometry_msgs.msg import Twist, Point, Quaternion
+from rbx1_nav.transform_utils import quat_to_angle, normalize_angle
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from kobuki_msgs.msg import AutoDockingAction, AutoDockingGoal
+from actionlib_msgs.msg import GoalStatus
+roslib.load_manifest('kobuki_auto_docking')
+
+
+def doneCb(status, result):
+    if 0:
+        print ''
+    elif status == GoalStatus.PENDING:
+        state = 'PENDING'
+    elif status == GoalStatus.ACTIVE:
+        state = 'ACTIVE'
+    elif status == GoalStatus.PREEMPTED:
+        state = 'PREEMPTED'
+    elif status == GoalStatus.SUCCEEDED:
+        state = 'SUCCEEDED'
+    elif status == GoalStatus.ABORTED:
+        state = 'ABORTED'
+    elif status == GoalStatus.REJECTED:
+        state = 'REJECTED'
+    elif status == GoalStatus.PREEMPTING:
+        state = 'PREEMPTING'
+    elif status == GoalStatus.RECALLING:
+        state = 'RECALLING'
+    elif status == GoalStatus.RECALLED:
+        state = 'RECALLED'
+    elif status == GoalStatus.LOST:
+        state = 'LOST'
+    # Print state of action server
+    print 'Result - [ActionServer: ' + state + ']: ' + result.text
 
 
 class MotionHandler(object):
@@ -25,10 +55,10 @@ class MotionHandler(object):
         self.map_frame = "/map"
         self.odom_frame = '/odom'
         self.base_frame = '/base_footprint'
-        if mode:
-            self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1.1))
-        else:
-            self.tf_listener.waitForTransform(self.map_frame, self.base_frame, rospy.Time(), rospy.Duration(2))
+        # if mode:
+        #     self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1.1))
+        # else:
+        #     self.tf_listener.waitForTransform(self.map_frame, self.base_frame, rospy.Time(), rospy.Duration(2))
 
     def goal(self, x=0.0, y=0.0, **kwargs):
         goal = MoveBaseGoal()
@@ -97,12 +127,29 @@ class MotionHandler(object):
         self.cmd_vel.publish(Twist())
         rospy.sleep(1)
 
+    def back_dock(self):
+        client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
+        while not client.wait_for_server(rospy.Duration(5)):
+            if rospy.is_shutdown():
+                return
+            print 'Action server is not connected yet. still waiting...'
+
+        goal = AutoDockingGoal()
+        client.send_goal(goal)
+        rospy.on_shutdown(client.cancel_goal)
+        client.wait_for_result()
+        if client.get_result().text == "Arrived on docking station successfully.":
+            return True
+        else:
+            return client.get_result()
+
 if __name__ == '__main__':
     import time
     handler = MotionHandler(node="test", mode=0)
     #print(time.time())
     #print(handler.get_coordinate())
     # handler.goal(x=0.06, y=0)
+    print(handler.back_dock())
     handler.move_base.cancel_all_goals()
 
 

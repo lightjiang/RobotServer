@@ -90,5 +90,8 @@ class MQNode(MQListen):
         self.robot_handler.move_base.cancel_all_goals()
         return 1
 
+    def back_dock(self):
+        return self.robot_handler.back_dock()
+
 if __name__ == '__main__':
     MQNode().listen()
