@@ -9,8 +9,8 @@ class netbook_battery():
     def __init__(self):
         rospy.init_node("netbook_battery")
         rospy.Subscriber("/laptop_charge", SmartBatteryStatus, self.NetbookPowerEventCallback)
-        rospy.Subscriber("/mobile_base/sensors/core", SensorState, self.SensorPowerEventCallback)
-        self.kobuki_base_max_charge = 160
+        # rospy.Subscriber("/mobile_base/sensors/core", SensorState, self.SensorPowerEventCallback)
+        self.kobuki_base_max_charge = 162
         rospy.spin()
 
     def SensorPowerEventCallback(self, data):

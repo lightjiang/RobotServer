@@ -105,6 +105,7 @@ class Robot(DataBase):
     charge = models.IntegerField(default=100)
     netbook_charge = models.IntegerField(default=100)
     local_map = models.CharField(max_length=20)
+    on_dock = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.id

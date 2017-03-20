@@ -18,9 +18,12 @@ from core.models import MarkNode, Robot
 
 
 class MQNode(MQListen):
-    def __init__(self):
+    def __init__(self, robot_handler=None):
         super(MQNode, self).__init__()
-        self.robot_handler = MotionHandler()
+        if not robot_handler:
+            self.robot_handler = MotionHandler()
+        else:
+            self.robot_handler = robot_handler
 
     def run(self, ch, method, properties, body):
         body = json.loads(body)
@@ -80,17 +83,15 @@ class MQNode(MQListen):
         node.my_save()
         return {"nodeId": node.id}
 
-    @staticmethod
-    def clear_costmaps(**kwargs):
-        rospy.wait_for_service('/move_base/clear_costmaps')
-        a = rospy.ServiceProxy('/move_base/clear_costmaps', Empty)
-        a.call()
+    def clear_costmaps(self, **kwargs):
+        self.robot_handler.clear_costmaps()
+        return 1
 
     def cancel_all_goal(self, **kwargs):
         self.robot_handler.move_base.cancel_all_goals()
         return 1
 
-    def back_dock(self):
+    def back_dock(self, **kwargs):
         return self.robot_handler.back_dock()
 
 if __name__ == '__main__':

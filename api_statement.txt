@@ -87,8 +87,13 @@ response_arg:
         "status": 0, "responseText": "ACCESS SUCCEED",
     }
 
-
-
+require : url + loads_clean/
+method: post
+require_arg: {"robotId": }
+response_arg:
+    {
+        "status": 0, "responseText": "ACCESS SUCCEED",
+    }
 
 
 

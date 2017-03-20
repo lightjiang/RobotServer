@@ -23,7 +23,7 @@ class ApiHandler(object):
         return self.__response(tableList=temp)
 
     def get_robots_list(self):
-        # self.update_status()
+        self.update_status()
         from core.models import Robot
         robots = Robot.objects.all()
         temp = []
@@ -125,7 +125,7 @@ class ApiHandler(object):
             nodes = robot.marknode_set.filter(id=int(data["nodeId"]), status=True)
             if nodes:
                 node = nodes[0]
-                message = {"x": node.x, "y": node.y, "z": node.rz}
+                message = {"x": node.x, "y": node.y, "rz": node.rz}
                 mq = MQSend()
                 me = mq.message("GoalMove", no_ack=False, **message)
                 mq.send(queue="BaseMission", message=me)
@@ -134,7 +134,7 @@ class ApiHandler(object):
             else:
                 self.__response(status=2011, response_text="node %s not existed" % data["nodeId"])
         elif category == "GoalBack":
-            message = {"x": 0, "y": 0, "z": 0}
+            message = {"x": 0, "y": 0, "rz": 0}
             mq = MQSend()
             me = mq.message("GoalMove", no_ack=False, **message)
             mq.send(queue="BaseMission", message=me)
@@ -143,7 +143,7 @@ class ApiHandler(object):
 
     def cancel_mission(self):
         mq = MQSend()
-        me = mq.message("cancel_all_goal", no_ack=False)
+        me = mq.message("cancel_all_goal", no_ack=True)
         mq.send(queue="BaseMission", message=me)
         self.__response()
 
@@ -157,6 +157,15 @@ class ApiHandler(object):
     def clear_costmaps(self):
         mq = MQSend()
         me = mq.message("clear_costmaps", no_ack=False)
+        mq.send(queue="BaseMission", message=me)
+        self.__response()
+
+    def loads_clean(self):
+        import time
+        time.sleep(3)
+        message = {"x": 0, "y": 0, "rz": 0}
+        mq = MQSend()
+        me = mq.message("GoalMove", no_ack=False, **message)
         mq.send(queue="BaseMission", message=me)
         self.__response()
 
