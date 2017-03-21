@@ -18,31 +18,6 @@ from actionlib_msgs.msg import GoalStatus
 roslib.load_manifest('kobuki_auto_docking')
 
 
-def done_cb(status, result):
-    if status == GoalStatus.PENDING:
-        state = 'PENDING'
-    elif status == GoalStatus.ACTIVE:
-        state = 'ACTIVE'
-    elif status == GoalStatus.PREEMPTED:
-        state = 'PREEMPTED'
-    elif status == GoalStatus.SUCCEEDED:
-        state = 'SUCCEEDED'
-    elif status == GoalStatus.ABORTED:
-        state = 'ABORTED'
-    elif status == GoalStatus.REJECTED:
-        state = 'REJECTED'
-    elif status == GoalStatus.PREEMPTING:
-        state = 'PREEMPTING'
-    elif status == GoalStatus.RECALLING:
-        state = 'RECALLING'
-    elif status == GoalStatus.RECALLED:
-        state = 'RECALLED'
-    elif status == GoalStatus.LOST:
-        state = 'LOST'
-    back_dock()
-    # Print state of action server
-
-
 class MotionHandler(object):
     def __init__(self, node="motion_base_control", mode=1):
         rospy.init_node(node, anonymous=False)
@@ -56,9 +31,17 @@ class MotionHandler(object):
         self.base_frame = '/base_footprint'
         self.on_dock = True
         if mode:
-            self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1.1))
+            self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(1))
         else:
             self.tf_listener.waitForTransform(self.map_frame, self.base_frame, rospy.Time(), rospy.Duration(2))
+        self.init_dock()
+
+    def init_dock(self):
+        self.dock_client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
+        while not self.dock_client.wait_for_server(rospy.Duration(5)):
+            if rospy.is_shutdown():
+                return
+            print 'Action server is not connected yet. still waiting...'
 
     @staticmethod
     def clear_costmaps():
@@ -71,6 +54,8 @@ class MotionHandler(object):
             self.on_dock = False
             self.move(x=-0.2)
             self.clear_costmaps()
+        else:
+            self.dock_client.cancel_all_goals()
         goal = MoveBaseGoal()
         goal.target_pose.header.frame_id = 'map'
         goal.target_pose.header.stamp = rospy.Time.now()
@@ -78,16 +63,10 @@ class MotionHandler(object):
         goal.target_pose.pose.position.y = y  # 3 meters
         goal.target_pose.pose.orientation = Quaternion()
         goal.target_pose.pose.orientation = angle_to_quat(rz)
-        if x==0 and y == 0 and rz == 0:
-            print 1423
-            self.move_base.send_goal(goal, done_cb=done_cb)
+        if x == 0 and y == 0 and rz == 0:
+            self.move_base.send_goal(goal, done_cb=self.back_callback)
         else:
-            print(1111)
             self.move_base.send_goal(goal)
-
-    def test(self):
-        self.goal(x=-4.58, y=-4.42)  # -math.pi/2)
-        # self.goal()
 
     def move(self, x=0.0, angle=0.0, hz=10, speed=0.2, rotate=1.0, **kwargs):
         """
@@ -140,12 +119,14 @@ class MotionHandler(object):
     def shutdown(self):
         # Always stop the robot when shutting down the node.
         rospy.loginfo("Stopping the robot...")
+        self.dock_client.cancel_all_goals()
         self.cmd_vel.publish(Twist())
         rospy.sleep(1)
 
-    def back_dock(self):
-        back_dock()
-        self.on_dock = True
+    def back_dock(self, *args, **kwargs):
+        print "docking :", args, kwargs
+        goal = AutoDockingGoal()
+        self.dock_client.send_goal(goal, done_cb=self.dock_callback)
         # client.wait_for_result()
         # if client.get_result().text == "Arrived on docking station successfully.":
         #     self.on_dock = True
@@ -153,8 +134,20 @@ class MotionHandler(object):
         # else:
         #     return client.get_result()
 
+    def dock_callback(self, status, *args, **kwargs):
+        print("dock status:", status)
+        if status == 3:
+            self.on_dock = True
+        else:
+            self.dock_client.cancel_all_goals()
 
-def back_dock():
+    def back_callback(self, status, *args, **kwargs):
+        print("back status :", status)
+        if status == 3:
+            self.back_dock()
+
+
+def back_dock(*args, **kwargs):
     client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
     while not client.wait_for_server(rospy.Duration(5)):
         if rospy.is_shutdown():
@@ -166,10 +159,9 @@ def back_dock():
     rospy.on_shutdown(client.cancel_goal)
     return client
 
+
 if __name__ == '__main__':
     handler = MotionHandler(mode=0)
     handler.on_dock = False
     handler.goal(0, 0, 0)
     print handler.get_coordinate()
-
-

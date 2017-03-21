@@ -4,10 +4,12 @@
 light
 接受MQ消息的ros节点
 """
-from script.MQhandler import MQListen
-from script.base import MotionHandler
+from MQhandler import MQListen
+from base import MotionHandler
 import json
 import os
+import sys
+sys.path.append(os.path.abspath('.'))
 import time
 import django
 import rospy
@@ -27,7 +29,6 @@ class MQNode(MQListen):
 
     def run(self, ch, method, properties, body):
         body = json.loads(body)
-        print(body)
         if "no_ack" in body:
             no_ack = body["no_ack"]
         else:
@@ -45,13 +46,13 @@ class MQNode(MQListen):
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def goalmove(self, **kwargs):
+        print(kwargs)
         self.robot_handler.goal(**kwargs)
         return True
 
     def update_status(self, **kwargs):
         robot = Robot.objects.get(id=kwargs["robot_id"])
         stat = self.robot_handler.move_base.get_goal_status_text()
-        print([stat])
         if stat == "":
             mode = 0
         elif stat == "Failed to find a valid plan. Even after executing recovery behaviors.":
