@@ -12,3 +12,10 @@
 
     cd /home/workstation/PycharmProjects/trunk/RobotsServer/script
     python MQNode.py
+
+
+
+fetch
+    server
+        roscore robot fetchcore-client pmd_driver_monitor joystick_monitor
+        sudo initctl list

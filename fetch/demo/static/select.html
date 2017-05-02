@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+  <title>DOING</title>
+  <script src="jquery-1.9.1.min.js"></script>
+    <link rel="icon" href="data:,">
+    <style>
+
+    /*font*/
+    h1
+    {
+	    text-shadow: 3px 3px 3px #4CAF50;
+    }
+
+    /*button*/
+    .button {
+      display: inline-block;
+      padding: 15px 25px;
+      font-size: 24px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      outline: none;
+      color: #fff;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+    }
+    .button:hover {background-color: grey}
+    .button:active {
+      //background-color: #3e8e41;
+      background-color: vanilla;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    /*button_1*/
+     .button_1 {
+      display: inline-block;
+      padding: 15px 25px;
+      font-size: 24px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      outline: none;
+      color: #fff;
+      //background-color: #4CAF50;
+      background-color: #008CBA;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+    }
+    .button_1:hover {background-color: #3e8e41}
+    .button_1:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+
+    /***************************************
+    .button {
+
+        /*Step 2: Basic Button Styles*/
+        display: block;
+        height: 100px;
+        width: 200px;
+        background: #34696f;
+        border: 2px solid rgba(33, 68, 72, 0.59);
+
+        display: inline-block;
+
+        /*Step 3: Text Styles*/
+        color: rgba(0, 0, 0, 0.55);
+        text-align: center;
+        font: bold 4.2em/100px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+
+        /*Step 4: Fancy CSS3 Styles*/
+        background: -webkit-linear-gradient(top, #34696f, #2f5f63);
+        background: -moz-linear-gradient(top, #34696f, #2f5f63);
+        background: -o-linear-gradient(top, #34696f, #2f5f63);
+        background: -ms-linear-gradient(top, #34696f, #2f5f63);
+        background: linear-gradient(top, #34696f, #2f5f63);
+
+        -webkit-border-radius: 50px;
+        -khtml-border-radius: 50px;
+        -moz-border-radius: 50px;
+        border-radius: 50px;
+
+        -webkit-box-shadow: 0 8px 0 #1b383b;
+        -moz-box-shadow: 0 8px 0 #1b383b;
+        box-shadow: 0 8px 0 #1b383b;
+
+        /* text-shadow: 0 2px 2px rgba(255, 255, 255, 0.2); */
+        text-shadow: 0 2px 2px rgba(255, 255, 255, 0.2);
+    }
+    ************************************/
+    /*Step 3: Link Styles*/
+    a.button2 {
+        text-decoration: none;
+    }
+
+    /*Step 5: Hover Styles*/
+    a.button:hover {
+        background: #3d7a80;
+        background: -webkit-linear-gradient(top, #3d7a80, #2f5f63);
+        background: -moz-linear-gradient(top, #3d7a80, #2f5f63);
+        background: -o-linear-gradient(top, #3d7a80, #2f5f63);
+        background: -ms-linear-gradient(top, #3d7a80, #2f5f63);
+        background: linear-gradient(top, #3d7a80, #2f5f63);
+    }
+
+    .product{
+        border:2px solid green;
+        padding:10px 40px;
+        background:white;
+        width:180px;
+        border-radius:25px;
+    /*
+        display:inline-block;
+        margin-left:5px;
+        height:200px;
+        width:300px;
+        border:2px solid black;
+        border-radius:2%;
+        background-color: white;
+     */
+    }
+    /*
+    .active{
+        background-color: green;
+    }
+    */
+
+    .upperclass{
+        padding-top: 1px;
+        padding-left: 1px;
+        padding-bottom: 1px;
+    }
+
+    .innerclass{
+        padding-bottom: 1px;
+        padding-left: 1px;
+    }
+
+    .buttondiv{
+    padding-left:1px;
+    }
+    /*
+    div
+    {
+        margin:20px;
+        width:150px;
+        padding:10px;
+        height:70px;
+        border:2px solid black;
+        outline:2px solid red;
+        outline-offset:15px;
+    }
+    */
+
+    #stretch
+    {
+        -webkit-border-image:url(border.png) 30 30 stretch; /* Safari 5 and older */
+        -o-border-image:url(border.png) 30 30 stretch; /* Opera */
+        border-image:url(border.png) 30 30 stretch;
+    }
+    </style>
+</head>
+<body>
+<!--
+Enter text to send to the websocket server:
+<div id="send">
+    <input type="text" id="data" size="100"/><br>
+    <input type="button" id="sendtext" value="send text"/>
+</div>
+-->
+
+<h1 id="output"></h1>
+
+<div style="display: inline-block; border:2px;">
+    <div id="divoc1" class="product">
+        <div class="upperclass"> Mouse mat </div>
+        <div class="innerclass"> Quantity <input type="text" id="location1" size="5" value="0"/> </div>
+    </div>
+    <div id="divoc2" class="product">
+        <div class="upperclass"> Ball pen </div>
+        <div class="innerclass"> Quantity <input type="text" id="location2" size="5" value="0"/> </div>
+    </div>
+    <div id="divoc3" class="product">
+        <div class="upperclass"> USB light </div>
+        <div class="innerclass"> Quantity <input type="text" id="location3" size="5" value="0"/> </div>
+    </div>
+</div>
+<!--
+<div style="display: inline-block;">
+    <div id="divoc4" class="product">
+        <div class="upperclass"> Product 4 </div>
+        <div class="innerclass"> Quantity <input type="text" id="location4" size="5" value="0"/> </div>
+    </div>
+    <div id="divoc5" class="product">
+        <div class="upperclass"> Product 5 </div>
+        <div class="innerclass"> Quantity <input type="text" id="location5" size="5" value="0"/> </div>
+    </div>
+    <div id="divoc6" class="product">
+        <div class="upperclass"> Product 6 </div>
+        <div class="innerclass"> Quantity <input type="text" id="location6" size="5" value="0"/> </div>
+    </div>
+</div>
+-->
+<div><br></div>
+<div>
+    <input type="button" id="initbutton" class="button_1" value="Start Position"/>
+<!--</div>
+<div class="buttondiv">
+-->
+
+    <input type="button"  class="button" id="locbutton" value="Ok"/>
+</div>
+
+</body>
+</html>
+<script>
+
+jQuery(function($){
+
+  if (!("WebSocket" in window)) {
+    alert("Your browser does not support web sockets");
+  }else{
+    setup();
+  }
+
+
+  function setup(){
+
+    // Note: You have to change the host var
+    // if your client runs on a different machine than the websocket server
+
+    var host = "ws://192.168.100.2:9090/ws";
+    var socket = new WebSocket(host);
+
+    //console.log("socket status: " + socket.readyState);
+
+    var $txt = $("#data");
+    var $btnSend = $("#sendtext");
+
+    //socket.send("id=0,val=100");
+
+    $txt.focus();
+
+    /* event handlers for UI */
+    $("#locbutton").on('click',function(){
+      if(confirm("Are you sure?"))
+      {
+        message = "id=300,val1="+$("#location1").val()+"&val2="+$("#location2").val()+"&val3="+$("#location3").val();
+        socket.send(message);
+      }
+      else
+      {
+        alert("cancel")
+      }
+    });
+
+    // event handlers for UI
+    $("#initbutton").on('click',function(){
+      socket.send("id=1,val=201");
+    });
+
+    // event handlers for UI
+    $btnSend.on('click',function(){
+      var text = $txt.val();
+      if(text == ""){
+        return;
+      }
+      socket.send(text);
+      $txt.val("");
+    });
+
+    $txt.keypress(function(evt){
+      if(evt.which == 13){
+        $btnSend.click();
+      }
+    });
+
+    // event handlers for websocket
+    if(socket){
+
+      socket.onopen = function(){
+        //alert("connection opened....");
+        socket.send("id=0,val=200");
+      }
+
+      socket.onmessage = function(msg){
+        //alert(msg.data);
+	    message = msg.data.split(':');
+	    //alert(message.length);
+	    if(message.length > 1)
+	    {
+	        //alert(message[0]);
+	        if(message[0] == '0')
+	        {
+	            qty = message[1].split(',');
+	            $("#location1").val(qty[0]);
+	            $("#location2").val(qty[1]);
+	            $("#location3").val(qty[2]);
+	            //$("#location4").val(qty[3]);
+	            //$("#location5").val(qty[4]);
+	            //$("#location6").val(qty[5]);
+
+	            //alert(qty[0]);
+	         }
+	        else if(message[0] == '1')
+	        {
+                //$("#divoc1").removeClass("active");
+                //$("#divoc2").removeClass("active");
+                //$("#divoc3").removeClass("active");
+                //$("#divoc4").removeClass("active");
+                //$("#divoc5").removeClass("active");
+                //$("#divoc6").removeClass("active");
+                pos = message[1].split(',');
+                if(pos[1] == "1")
+                    $("#divoc2").css("background-color","blue");
+                else if(pos[1] == "2")
+                    $("#divoc3").css("background-color","blue");
+                else if(pos[1] == "3")
+                /*
+                    $("#divoc4").css("background-color","blue");
+                else if(pos[1] == "4")
+                    $("#divoc5").css("background-color","blue");
+                else if(pos[1] == "5")
+                    $("#divoc6").css("background-color","blue");
+                else if(pos[1] == "6")
+                    alert('6');
+                */
+                showServerResponse(pos[0]);
+            }
+	    }
+	    else
+            showServerResponse(msg.data);
+	    //alert('22');
+      }
+
+      socket.onclose = function(){
+        //alert("connection closed....");
+        showServerResponse("The connection has been closed.");
+      }
+
+    }else{
+      console.log("invalid socket");
+    }
+
+    function showServerResponse(txt){
+      var p = document.createElement('p');
+      p.innerHTML = txt;
+      document.getElementById('output').innerHTML = txt;
+      //document.getElementById('output').appendChild(p);
+    }
+
+
+  }
+
+});
+
+</script>
